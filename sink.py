@@ -15,19 +15,21 @@ class Skin:
         recvIniticalTask = self.fan.recv_json()
         print(recvIniticalTask['numberTask'])
 
-        self.classes = {}
+        self.averages = {}
         for i in range(recvIniticalTask['numerCluster']):
-            self.classes[i] = []
+            self.averages[i] = []
 
         for task in range(int(recvIniticalTask['numberTask'])):
             s = self.fan.recv_json()
-            for p in range(recvIniticalTask['numerCluster']):
-                if len(s['data'][str(p)])  != 0:
-                    self.classes[p].append(s['data'][str(p)])
-            print(self.classes)
-                
-                
+            for i in range(len(s['data'])):
+                self.averages[s['data'][i]['cluster']].append(s['data'][i]['average'])
+                #print(s['data'][i]['average'])
+            self.recomputeCentroids(self.averages[0])
+
         self.sendFan.send_json(s)
+
+    def recomputeCentroids(self,puntos):
+        print(puntos)
 
 if __name__ == '__main__':
     skin = Skin()

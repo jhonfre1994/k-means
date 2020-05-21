@@ -3,7 +3,7 @@ import time
 import zmq
 import itertools
 import math
-
+import pprint
 
 class Worker:
     def __init__(self):
@@ -16,12 +16,21 @@ class Worker:
         while True:
             data = []
             s = self.work.recv_json()
-            data = self.readFile(s['initLine'], s['finalLine'])
+            data = self.readFile(s['initLine'] - 1 , s['finalLine'])
+            self.centroids = {}
             self.processInfo(data, s['clusters'])
-            dataWorkes = {
-                'data': self.classes
+            self.centroids = s['clusters']
+            print("Procesando informacion, de la linea", str(s['initLine']), "hasta la linea", str(s['finalLine'])  )
+            resSink = []
+            for c in range(len(s['clusters'])):
+                res = self.averagePoints(c, self.classes[c], len(data[0]))
+                resSink.append(res)
+            pprint.pprint(resSink)
+
+            dataWorkers = {
+                'data': resSink
             }
-            self.sink.send_json(dataWorkes)
+            self.sink.send_json(dataWorkers)
 
     def readFile(self, init, final):
         data = []
@@ -64,6 +73,20 @@ class Worker:
         f = s/(self.norm(p)*self.norm(q))
         f = round(f, 5)
         return math.acos(f)
+
+    def averagePoints(self, c, points, dim):
+        dimensions = dim
+        for d in range(dimensions):
+            sumd = 0
+            for p in points:
+                sumd += p[d]
+            self.centroids[c][d] = sumd
+            json = {
+                'average': self.centroids[c],
+                'cluster': c,
+                'sizePoints': len(points)
+            }
+        return json
 
 
 if __name__ == '__main__':

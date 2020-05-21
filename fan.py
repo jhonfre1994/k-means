@@ -43,7 +43,7 @@ class K_Means:
 
     def cluster(self):
         dataSink = {
-            'numberTask': self.max_iterations,
+            'numberTask': self.totalLinesFile,
             'numerCluster': self.k
         }
         self.sinkPush.send_json(dataSink)
@@ -58,7 +58,7 @@ class K_Means:
                 print(j)
                 dataWorkes = {
                     'clusters': self.clusters,
-                    'initLine': init,
+                    'initLine': init + 1,
                     'finalLine':final,
                     'iteriator': j
                 }
