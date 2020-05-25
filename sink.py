@@ -23,13 +23,16 @@ class Skin:
             s = self.fan.recv_json()
             for i in range(len(s['data'])):
                 self.averages[s['data'][i]['cluster']].append(s['data'][i]['average'])
-                #print(s['data'][i]['average'])
-            self.recomputeCentroids(self.averages[0])
+            if len(self.averages[0]) == 15:
+                self.recomputeCentroids(self.averages, s)
 
-        self.sendFan.send_json(s)
-
-    def recomputeCentroids(self,puntos):
+    def recomputeCentroids(self,puntos,s):
         print(puntos)
+        self.sendFan.send_json(s)
+        for i in range(3):
+            self.averages[i] = []
+
+
 
 if __name__ == '__main__':
     skin = Skin()

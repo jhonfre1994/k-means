@@ -25,6 +25,7 @@ class Worker:
             for c in range(len(s['clusters'])):
                 res = self.averagePoints(c, self.classes[c], len(data[0]))
                 resSink.append(res)
+            print(s['iteriator'])
             pprint.pprint(resSink)
 
             dataWorkers = {

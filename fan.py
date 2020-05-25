@@ -42,13 +42,13 @@ class K_Means:
             return data
 
     def cluster(self):
+        linesByWorker = math.ceil(self.totalLinesFile / self.quantityLines)
         dataSink = {
             'numberTask': self.totalLinesFile,
             'numerCluster': self.k
         }
         self.sinkPush.send_json(dataSink)
 
-        linesByWorker = math.ceil(self.totalLinesFile / self.quantityLines)
         init=0
         final=self.quantityLines
         for i in range(self.max_iterations):
